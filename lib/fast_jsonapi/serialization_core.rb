@@ -17,6 +17,7 @@ module FastJsonapi
                       :uncachable_relationships_to_serialize,
                       :transform_method,
                       :record_type,
+                      :record_type_block,
                       :record_id,
                       :cache_store_instance,
                       :cache_store_options,
@@ -69,7 +70,7 @@ module FastJsonapi
         if cache_store_instance
           cache_opts = record_cache_options(cache_store_options, fieldset, includes_list, params)
           record_hash = cache_store_instance.fetch(record, **cache_opts) do
-            temp_hash = id_hash(id_from_record(record, params), record_type, true)
+            temp_hash = id_hash(id_from_record(record, params), type_from_record(record, record_type), true)
             temp_hash[:attributes] = attributes_hash(record, fieldset, params) if attributes_to_serialize.present?
             temp_hash[:relationships] = relationships_hash(record, cachable_relationships_to_serialize, fieldset, includes_list, params) if cachable_relationships_to_serialize.present?
             temp_hash[:links] = links_hash(record, params) if data_links.present?
@@ -77,7 +78,7 @@ module FastJsonapi
           end
           record_hash[:relationships] = (record_hash[:relationships] || {}).merge(relationships_hash(record, uncachable_relationships_to_serialize, fieldset, includes_list, params)) if uncachable_relationships_to_serialize.present?
         else
-          record_hash = id_hash(id_from_record(record, params), record_type, true)
+          record_hash = id_hash(id_from_record(record, params), type_from_record(record, record_type), true)
           record_hash[:attributes] = attributes_hash(record, fieldset, params) if attributes_to_serialize.present?
           record_hash[:relationships] = relationships_hash(record, nil, fieldset, includes_list, params) if relationships_to_serialize.present?
           record_hash[:links] = links_hash(record, params) if data_links.present?
@@ -124,6 +125,12 @@ module FastJsonapi
         raise MandatoryField, 'id is a mandatory field in the jsonapi spec' unless record.respond_to?(:id)
 
         record.id
+      end
+
+      def type_from_record(record, record_type)
+        return FastJsonapi.call_proc(record_type_block, record) if record_type_block.is_a?(Proc)
+
+        record_type
       end
 
       # It chops out the root association (first part) from each include.

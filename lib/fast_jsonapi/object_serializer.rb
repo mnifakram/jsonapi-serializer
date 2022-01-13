@@ -128,6 +128,7 @@ module FastJsonapi
         subclass.set_type(subclass.reflected_record_type) if subclass.reflected_record_type
         subclass.meta_to_serialize = meta_to_serialize
         subclass.record_id = record_id
+        subclass.record_type_block = record_type_block
       end
 
       def reflected_record_type
@@ -169,6 +170,10 @@ module FastJsonapi
 
       def set_id(id_name = nil, &block)
         self.record_id = block || id_name
+      end
+
+      def set_record_type_block(&block)
+        self.record_type_block = block
       end
 
       def cache_options(cache_options)

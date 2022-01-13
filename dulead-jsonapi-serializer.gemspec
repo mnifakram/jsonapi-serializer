@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'jsonapi/serializer/version'
 
 Gem::Specification.new do |gem|
-  gem.name = 'jsonapi-serializer'
+  gem.name = 'dulead-jsonapi-serializer'
   gem.version = JSONAPI::Serializer::VERSION
 
   gem.authors = ['JSON:API Serializer Community']
@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.summary = 'Fast JSON:API serialization library'
   gem.description = 'Fast, simple and easy to use '\
     'JSON:API serialization library (also known as fast_jsonapi).'
-  gem.homepage = 'https://github.com/jsonapi-serializer/jsonapi-serializer'
+  gem.homepage = 'https://github.com/mnifakram/jsonapi-serializer'
   gem.licenses = ['Apache-2.0']
   gem.files = Dir['lib/**/*']
   gem.require_paths = ['lib']
