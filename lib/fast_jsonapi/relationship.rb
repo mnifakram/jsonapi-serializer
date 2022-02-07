@@ -220,7 +220,12 @@ module FastJsonapi
 
       # if not, use the record type of the serializer, and memoize the transformed version
       serializer = serializer_for(record, serialization_params)
-      @record_types_for[serializer] ||= run_key_transform(serializer.record_type)
+      # if the serializer has record_type_block -> use it instead
+      if serializer.record_type_block.present?
+        @record_types_for[serializer] ||= serializer.record_type_block.call(record)
+      else
+        @record_types_for[serializer] ||= run_key_transform(serializer.record_type)
+      end
     end
 
     def compute_static_record_type
